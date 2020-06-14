@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../public/style.css">
+    <title>Movies</title>
+</head>
+
+<body>
+    <div class="central">
+
+        <%- include ('./partials/header') %>
+
+        <h1><%= title %></h1>
+        <h2>Liste de film culte</h2>
+
+        <div class="frenchMovies">
+            <% for (movie of movies) { %>
+                <div> <%= movie.title %> (<%= movie.year %>) </div>
+            <% } %>
+        </div>
+
+        <br>
+
+        <form action="/movies" method="POST">
+            <div>
+                <label for="movieTitle">Titre du film :</label>
+                <input type="text" name="movieTitle" id="movieTitle">
+                <label for="movieYear">Titre du film :</label>
+                <input type="text" name="movieYear" id="movieYear">
+            </div>
+            <button type="submit">Ajouter</button>
+        </form>
+    </div>
+
+    <%- include ('./partials/footer') %>
+
+    <script>
+
+        var form = document.querySelector('form');
+        form.addEventListener("submit", addMovie);	
+
+        function addMovie(event) {
+            if(fetch) {
+                addMovieUsingFetch(event);
+            } else {
+                addMovieUsingXHR(event);
+            }
+        }	
+
+        function addMovieUsingFetch(event) {
+
+            event.preventDefault();
+            
+            fetch('/movies', {
+                method: 'POST',
+                body: new FormData(form)
+            })
+            .then(checkStatus)
+            .catch(function(error) {
+                console.log('request failed', error)
+            });
+        } 
+
+        function checkStatus(response) {
+            
+            if (response.status >= 200 && response.status < 300) {					
+                let newMovieDiv = document.createElement('div');
+                const movietitle = document.getElementById('movieTitle').value;
+                const movieyear = document.getElementById('movieYear').value;
+                newMovieDiv.innerHTML = `${movietitle} (${movieyear})`;
+                document.querySelector('.frenchMovies').appendChild(newMovieDiv);
+                form.reset();
+            } else {
+                const error = new Error(response.statusText);
+                error.response = response;
+                throw error;
+            }
+        }
+        
+        function addMovieUsingXHR(event) {
+
+            event.preventDefault();
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", '/movies-old-browser', true);
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function() {
+                if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+                    form.reset();
+                }
+            }
+
+            var movietitle = document.getElementById('movieTitle').value;
+            var movieyear = document.getElementById('movieYear').value;
+            var payLoad = "movietitle=" + movieTitle + "&" + "movieyear=" + movieYear; 
+            xhr.send(payLoad);
+        }
+    </script>
+</body>
+</html>

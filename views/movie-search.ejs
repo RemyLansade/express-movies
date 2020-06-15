@@ -1,0 +1,42 @@
+<%- include ('./partials/header') %>
+
+<h1>Votre recherche sur <em>The Movie Database</em></h1>
+<div>
+    <input type="text" name="term" id="term" placeholder="titre de film">
+    <button id="btn-search">Rechercher</button>
+</div>
+
+<div id="results">
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+    const apiKey    = '5629071ccbd3e8676ff2ecf0ecf28dbd';
+    const language  = 'fr-FR'
+    const term      = document.querySelector('#term');
+    const btnSearch = document.querySelector('#btn-search');
+    let resultsDiv  = document.querySelector('#results');
+
+    btnSearch.addEventListener('click', search);
+
+    function search() {
+        const query = `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${term.value}&language=${language}`;
+        axios.get(query).then(function(response) {
+            // console.log(response);
+            displayResults(response.data.results);
+        });
+    }
+
+    function displayResults(results) {
+        resultsDiv.innerHTML = '';
+        for(let result of results){
+            let movieDiv = document.createElement('div');
+            movieDiv.innerHTML = result.title;
+            resultsDiv.appendChild(movieDiv);
+        }
+    }
+</script>
+
+<%- include ('./partials/footer') %>

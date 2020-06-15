@@ -1,16 +1,6 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../public/style.css">
-    <title>Movies</title>
-</head>
+<%- include ('./partials/header') %>
 
-<body>
     <div class="central">
-
-        <%- include ('./partials/header') %>
 
         <h1><%= title %></h1>
         <h2>Liste de film culte</h2>
@@ -65,17 +55,21 @@
 
         function checkStatus(response) {
             
-            if (response.status >= 200 && response.status < 300) {					
+            if (response.status >= 200 && response.status < 300) {	
+
                 let newMovieDiv = document.createElement('div');
                 const movietitle = document.getElementById('movieTitle').value;
                 const movieyear = document.getElementById('movieYear').value;
                 newMovieDiv.innerHTML = `${movietitle} (${movieyear})`;
                 document.querySelector('.frenchMovies').appendChild(newMovieDiv);
                 form.reset();
+
             } else {
+
                 const error = new Error(response.statusText);
                 error.response = response;
                 throw error;
+
             }
         }
         
@@ -83,20 +77,22 @@
 
             event.preventDefault();
 
-            var xhr = new XMLHttpRequest();
+            const xhr = new XMLHttpRequest();
+
             xhr.open("POST", '/movies-old-browser', true);
-            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
             xhr.onreadystatechange = function() {
                 if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
                     form.reset();
                 }
             }
 
-            var movietitle = document.getElementById('movieTitle').value;
-            var movieyear = document.getElementById('movieYear').value;
-            var payLoad = "movietitle=" + movieTitle + "&" + "movieyear=" + movieYear; 
+            const movietitle = document.getElementById('movieTitle').value;
+            const movieyear = document.getElementById('movieYear').value;
+            const payLoad = "movietitle=" + movieTitle + "&" + "movieyear=" + movieYear;
+
             xhr.send(payLoad);
         }
     </script>
-</body>
-</html>
+
+<% include ('./partials/footer') %> 
